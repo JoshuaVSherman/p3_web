@@ -110,7 +110,6 @@ define([
         }
 
         var _self = this;
-        console.log(this.state.toId);
         // console.warn(this.state, this.state.genome_ids, !this.state.genome_ids);
         if(!this.state){
           // console.log("No Genome IDS, use empty data set for initial store");
@@ -131,7 +130,9 @@ define([
         var fromId = this.state.fromId;
         var toIdGroup = this.state.toIdGroup;
         var toId = this.state.toId;
-        var fromIdValue = this.state.fromIdValue.split(',');
+        if(this.state.fromIdValue !== null && this.state.fromIdValue !== undefined){
+          fromIdValue = this.state.fromIdValue.split(',');
+        }
         var via ="gene_id";
         via= this.state.joinId;
         // the joinID is what creates Advanced Search
@@ -150,19 +151,24 @@ define([
         }
 
         _self.sourceToTarget={};
-        fromIdValue.forEach(function(d){
-          _self.sourceToTarget[d]={};
-        });
+        if(fromIdValue !== null && fromIdValue !== undefined) {
+          fromIdValue.forEach(function(d){
+            _self.sourceToTarget[d]={};
+          });
+          _self.summary.total =fromIdValue.length;
+        }
 
-
-
-        _self.summary.total =fromIdValue.length;
         _self.summary.type =toId;
 
         // console.log(this.state);
 
         if(fromIdGroup === 'PATRIC'){
           if(toIdGroup === 'PATRIC'){
+            var queryString;
+            if(fromIdValue === null || fromIdValue === undefined){
+              var fromIdValue = ['fig|339670.34.peg.4', 'fig|339670.34.peg.5', 'fig|339670.34.peg.6'];
+              // queryString = fromId + ":(" + fromIdValue.join(" OR ") + ") AND "+ toId + ":[* TO *]"
+            }
             this._loadingDeferred = when(request.post(_self.apiServer + '/genome_feature/', {
               handleAs: 'json',
               headers: {
@@ -204,6 +210,10 @@ define([
           var giNumbers = {};
           var accessionGiMap = {};
           var giTarget = {};
+          if(fromIdValue === null || fromIdValue === undefined){
+            var fromIdValue = ['fig|339670.34.peg.4', 'fig|339670.34.peg.5', 'fig|339670.34.peg.6'];
+            // queryString = fromId + ":(" + fromIdValue.join(" OR ") + ") AND "+ toId + ":[* TO *]"
+          }
           // step 1: get GeneID from fromId (query to genome_feature)
           // step 2: get UniprotKBAccession from GI numbers (query to id_ref), then create accessionGiMap
           // step 3: get requested id from UniprotKBAccession (query to id_ref), then create giTargetMap
@@ -427,6 +437,10 @@ define([
             });
           }else{
             // get UniprotKBAccession via query to id_ref
+            if(fromIdValue === null || fromIdValue === undefined){
+              var fromIdValue = ['fig|339670.34.peg.4', 'fig|339670.34.peg.5', 'fig|339670.34.peg.6'];
+              // queryString = fromId + ":(" + fromIdValue.join(" OR ") + ") AND "+ toId + ":[* TO *]"
+            }
             this._loadingDeferred = when(request.post(_self.apiServer + '/id_ref/', {
               handleAs: 'json',
               headers: {
@@ -536,6 +550,10 @@ define([
             });
           }else{
             // get UniprotKBAccession via query to id_ref
+            if(fromIdValue === null || fromIdValue === undefined){
+              var fromIdValue = ['fig|339670.34.peg.4', 'fig|339670.34.peg.5', 'fig|339670.34.peg.6'];
+              // queryString = fromId + ":(" + fromIdValue.join(" OR ") + ") AND "+ toId + ":[* TO *]"
+            }
             this._loadingDeferred = when(request.post(_self.apiServer + '/id_ref/', {
               handleAs: 'json',
               headers: {
