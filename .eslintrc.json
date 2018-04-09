@@ -34,6 +34,7 @@
     "new-cap": 0,
     "semi-spacing": 0,
     "brace-style": 0,
-    "no-alert": 0
+    "no-alert": 0,
+    "allowKeywords": 0
   }
 }
